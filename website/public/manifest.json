@@ -1,0 +1,16 @@
+{
+  "short_name": "NextBot0",
+  "name": "Next Bot 0",
+  "icons": [
+    {
+      "src": "/images/icons-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/?source=pwa",
+  "background_color": "#4285f4",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#4285f4"
+}

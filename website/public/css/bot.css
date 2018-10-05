@@ -1,0 +1,46 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    width: calc(100vw - 3px);
+    height: calc(100vh - 3px);
+}
+
+#flags-button {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+#flags-dialog section {
+    padding-bottom: 1em
+}
+
+#flags-dialog-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+
+/* http://w3bits.com/prevent-chrome-pull-to-refresh-css/ */
+body,
+.wrapper {
+    /* Break the flow */
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    overflow-y: hidden;
+}
+body {
+    z-index: 1;
+    overscroll-behavior-y: none;
+}
+.wrapper {
+    z-index: 2;
+}
