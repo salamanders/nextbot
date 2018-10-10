@@ -1,25 +1,24 @@
 package client
 
+
 import com.natpryce.konfig.*
 import com.natpryce.konfig.ConfigurationProperties.Companion.systemProperties
-import info.benjaminhill.nextbot.CloudBot
 import info.benjaminhill.nextbot.TwoWheelBot
+import info.benjaminhill.nextbot.hardware.RangeSensor
 import kotlinx.coroutines.delay
-
-
 import kotlinx.coroutines.runBlocking
+import mu.KotlinLogging
 import java.io.File
-import java.util.concurrent.TimeUnit
+import java.time.Duration
 import java.util.logging.Level
 import java.util.logging.LogManager
-import java.util.logging.Logger
 
+private val logger = KotlinLogging.logger {}
 
 fun main() = runBlocking {
-    LogManager.getLogManager().getLogger("").apply { level = Level.INFO }.handlers.forEach { it.level = Level.INFO }
-    val log = Logger.getLogger(CloudBot::class.java.name)!!
+    LogManager.getLogManager().getLogger("").apply { level = Level.WARNING }.handlers.forEach { it.level = Level.WARNING }
 
-    log.info("All is good.")
+    logger.info { "Spinning up!" }
 
     val fbIdKey = Key("fb.id", stringType)
     val uIdKey = Key("user.id", stringType)
@@ -27,12 +26,20 @@ fun main() = runBlocking {
             EnvironmentVariables() overriding
             ConfigurationProperties.fromFile(File("resources/nextbot.properties"))
 
+
+    val rs = RangeSensor()
+    println("Ping: ${rs.ping()}")
+    System.exit(-1)
+
     TwoWheelBot(config[fbIdKey], config[uIdKey]).use { twb ->
         twb.open()
-        delay(3, TimeUnit.SECONDS)
-        twb.setLeftSpeed(.5)
+        twb.script = "result.motor0 = bot.motor0 * 0.9; let x = notreal.obj;"
+        delay(Duration.ofSeconds(1).toMillis())
+        twb.setLeftSpeed(.95)
         twb.setRightSpeed(-1.0)
-        delay(10, TimeUnit.SECONDS)
+        delay(Duration.ofSeconds(15).toMillis())
     }
+
+    logger.info { "Spinning down!" }
 }
 

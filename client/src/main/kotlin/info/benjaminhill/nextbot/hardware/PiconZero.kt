@@ -1,4 +1,4 @@
-package info.benjaminhill.nextbot
+package info.benjaminhill.nextbot.hardware
 
 import com.pi4j.io.i2c.I2CBus
 import com.pi4j.io.i2c.I2CDevice
@@ -16,7 +16,7 @@ class PiconZero {
         device = try {
             I2CFactory.getInstance(I2CBus.BUS_0).getDevice(PICON_ZERO_ADDRESS)
         } catch (e: I2CFactory.UnsupportedBusNumberException) {
-            FakeI2CDevice("fakePiconZero")
+            FakeI2CDevice("fakeI2Cpz")
         }
         device.write(REGISTER_RESET, 0.toByte())
     }
@@ -29,7 +29,7 @@ class PiconZero {
         require(speed in -1.0..1.0)
         require(motorId in 0..1)
         val intSpeed = ((speed + 1.0) / 2 * (127 + 128) - 128).toInt()
-        log.info("setting DC motor $motorId to $intSpeed")
+        log.fine("setting DC motor $motorId to $intSpeed")
         device.write(motorId, intSpeed.toByte())
     }
 

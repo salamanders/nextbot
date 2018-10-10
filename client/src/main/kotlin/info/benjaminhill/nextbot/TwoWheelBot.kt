@@ -1,10 +1,10 @@
 package info.benjaminhill.nextbot
 
-import java.util.logging.Logger
+import info.benjaminhill.nextbot.hardware.PiconZero
+import mu.KLoggable
 
-open class TwoWheelBot(fbId: String, uId:String) : CloudBot(fbId, uId) {
-    @Transient
-    private var log: Logger = Logger.getLogger(this::class.java.name)!!
+
+open class TwoWheelBot(fbId: String, uId: String) : ScriptableCloudBot(fbId, uId) {
 
     @Transient
     private val motorShield = PiconZero()
@@ -12,13 +12,15 @@ open class TwoWheelBot(fbId: String, uId:String) : CloudBot(fbId, uId) {
     init {
         observers[this::motor0.name]!!.add { motorShield.setDCMotor(0, motor0) }
         observers[this::motor1.name]!!.add { motorShield.setDCMotor(1, motor1) }
-        observers[this::active.name]!!.add { if(!active) {
-            log.info("Not active, shutting down motors.")
-            motor0 = 0.0
-            motor1 = 0.0
-        }}
+        observers[this::running.name]!!.add {
+            if (!running) {
+                logger.info { "Not running, shutting down motors." }
+                motor0 = 0.0
+                motor1 = 0.0
+            }
+        }
 
-        println("TwoWheelBot Observers:" + observers.entries.joinToString(", ") { "${it.key}=${it.value.size}" })
+        logger.info { "TwoWheelBot Observer Keys (and count):" + observers.entries.joinToString(", ") { "${it.key} (${it.value.size})" } }
     }
 
     fun setLeftSpeed(speed: Double) {
@@ -44,4 +46,8 @@ open class TwoWheelBot(fbId: String, uId:String) : CloudBot(fbId, uId) {
     var isMotor0Right by syncToCloud(false)
     var isRightForward by syncToCloud(false)
     var isLeftForward by syncToCloud(false)
+
+    companion object : KLoggable {
+        override val logger = CloudBot.logger()
+    }
 }
