@@ -424,3 +424,21 @@ $RECYCLE.BIN/
 
 
 # End of https://www.gitignore.io/api/osx,java,linux,kotlin,android,windows,eclipse,firebase,netbeans,intellij,androidstudio
+client/target/antrun/build-main.xml
+client/src/veryold/RangeSensorManual.kt.txt
+client/src/veryold/RangeSensorDriver.kt.txt
+client/src/veryold/RangeSensor.kt.txt
+client/src/veryold/NetSonar.kt.txt
+client/src/veryold/NetLogHandler.kt.txt
+client/src/veryold/NetInvoker.kt.txt
+client/src/veryold/NetGpioListener.kt.txt
+client/src/veryold/NetCommand.kt.txt
+client/src/veryold/MainActivity.kt.txt
+client/src/veryold/CommandQueue.kt.txt
+client/resources/serviceAccountKey.json
+client/target/classes/META-INF/info.benjaminhill.nextbot.kotlin_module
+client/target/maven-archiver/pom.properties
+client/target/maven-status/maven-compiler-plugin/compile/java-compile/inputFiles.lst
+website/.firebase/hosting.cHVibGlj.cache
+SCRATCH.md
+npm/package-lock.json

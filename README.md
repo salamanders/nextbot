@@ -7,6 +7,7 @@
 A typical smartphone includes a screen, battery, GPS, WiFi, Bluetooth, camera, gyroscope, GPU, and storage all in one!
 
 
+
 ## Stack
 
 1. Web UI hosted on [Firebase free tier](https://firebase.google.com/pricing/)
@@ -20,6 +21,7 @@ A typical smartphone includes a screen, battery, GPS, WiFi, Bluetooth, camera, g
     4. Sending signals to pi4j
     5. Connecting to i2c devices
     6. Through a PiCon Zero motor shield
+    7. And to GPIO devices through `sudo apt-get install wiringPi`
 3. Powering cheap/scavenged DC Motors
     1. Driving TPU printed wheels
 
@@ -32,6 +34,8 @@ A typical smartphone includes a screen, battery, GPS, WiFi, Bluetooth, camera, g
 ## TODO
 
 * log of all changes (both in and out)
+* Toast warnings to the web
+* Maven compile to deploy to pi
 * http://pi4j.com/example/control.html
 * https://github.com/Pi4J/pi4j/blob/master/pi4j-core/src/main/java/com/pi4j/io/i2c/impl/I2CDeviceImpl.java
 * http://pi4j.com/usage.html
