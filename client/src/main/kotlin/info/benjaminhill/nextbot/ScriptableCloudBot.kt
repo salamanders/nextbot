@@ -34,8 +34,8 @@ open class ScriptableCloudBot(fbId: String, uId: String) : CloudBot(fbId, uId), 
 
     var scriptError by syncToCloud("")
 
-    override fun open() {
-        super.open()
+    override fun initObserversAndSync() {
+        super.initObserversAndSync()
         observers[this::script.name]!!.add { setCode() }
     }
 
@@ -87,6 +87,7 @@ const _history = {
 function botLoop(jsonStr) {
   "use strict";
   _history._count++;
+  _history._durationMs = (new Date()).getTime() - _history._previousTs;
   const bot = JSON.parse(jsonStr);
   const result = {};
   $script

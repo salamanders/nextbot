@@ -1,10 +1,12 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
 <html lang="en-US">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=320, initial-scale=1">
+    <meta content="width=320, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+          name="viewport">
     <title>nextbot0</title>
-    <link rel="manifest" href="/manifest.json">
+    <link href="manifest.json" rel="manifest">
     <meta name="theme-color" content="#4285f4">
 
     <script defer src="/__/firebase/5.5.2/firebase-app.js"></script>
@@ -25,63 +27,80 @@
 
     <script defer src="js/bot.js"></script>
 
-
 </head>
 
 <body>
-<div class="wrapper">
 
-    <div id="bidi-content-number">
-        <template id="bidi-template-number">
-            <table class="scalar-container">
-                <tr>
-                    <th><label for="tempslider-1">TempSlider 1</label></th>
-                </tr>
-                <tr>
-                    <td><input type="range" orient="vertical" id="tempslider-1" name="tempslider-1" min="-1" max="1"
-                               value="0.0" step="0.1"/></td>
-                </tr>
-            </table>
+<div id="bidi-content-number">
+    <template id="bidi-template-number">
+        <table class="scalar-container">
+            <tr>
+                <th><label for="tempslider-1">TempSlider 1</label></th>
+            </tr>
+            <tr>
+                <td><input id="tempslider-1" max="1" min="-1" name="tempslider-1" step="0.1"
+                           type="range" value="0.0"/></td>
+            </tr>
+        </table>
+    </template>
+</div>
+
+<button aria-label="Flags" class="mdc-fab mdc-fab--mini material-icons" id="flags-button">
+    <span class="mdc-fab__icon">developer_board</span>
+</button>
+
+<button aria-label="Script" class="mdc-fab mdc-fab--mini material-icons" id="script-button">
+    <span class="mdc-fab__icon">description</span>
+</button>
+
+
+<dialog aria-modal="true" id="flags-dialog" role="dialog">
+    <div class="mdc-dialog__content" id="bidi-content-boolean">
+        <template id="bidi-template-boolean">
+            <div class="mdc-form-field">
+                <div class="mdc-checkbox">
+                    <input class="mdc-checkbox__native-control"
+                           id="tempflag-1"
+                           name="tempflag-1"
+                           type="checkbox"/>
+                    <div class="mdc-checkbox__background">
+                        <svg class="mdc-checkbox__checkmark"
+                             viewBox="0 0 24 24">
+                            <path class="mdc-checkbox__checkmark-path"
+                                  d="M1.73,12.91 8.1,19.28 22.79,4.59"
+                                  fill="none"></path>
+                        </svg>
+                        <div class="mdc-checkbox__mixedmark"></div>
+                    </div>
+                </div>
+                <label for="tempflag-1">Checkbox 1</label>
+            </div>
         </template>
     </div>
 
-    <button id="flags-button" class="mdc-fab mdc-fab--mini material-icons" aria-label="Flags">
-        <span class="mdc-fab__icon">developer_board</span>
-    </button>
+    <footer class="mdc-dialog__actions">
+        <button class="mdc-button mdc-dialog__button dialog-close" data-mdc-dialog-action="close"
+                id="flags-dialog-close"
+                type="button">Close
+        </button>
+    </footer>
 
-    <dialog id="flags-dialog" aria-modal="true" role="dialog">
-        <div class="mdc-dialog__content" id="bidi-content-boolean">
-            <template id="bidi-template-boolean">
-                <div class="mdc-form-field">
-                    <div class="mdc-checkbox">
-                        <input type="checkbox"
-                               class="mdc-checkbox__native-control"
-                               id="tempflag-1"
-                               name="tempflag-1"/>
-                        <div class="mdc-checkbox__background">
-                            <svg class="mdc-checkbox__checkmark"
-                                 viewBox="0 0 24 24">
-                                <path class="mdc-checkbox__checkmark-path"
-                                      fill="none"
-                                      d="M1.73,12.91 8.1,19.28 22.79,4.59"></path>
-                            </svg>
-                            <div class="mdc-checkbox__mixedmark"></div>
-                        </div>
-                    </div>
-                    <label for="tempflag-1">Checkbox 1</label>
-                </div>
-            </template>
-        </div>
+</dialog>
 
-        <footer class="mdc-dialog__actions">
-            <button id="flags-dialog-close" type="button" class="mdc-button mdc-dialog__button"
-                    data-mdc-dialog-action="close">Close
-            </button>
-        </footer>
 
-    </dialog>
+<dialog aria-modal="true" id="script-dialog" role="dialog">
+    <div class="mdc-dialog__content">
+    </div>
 
-</div>
+    <footer class="mdc-dialog__actions">
+        <button class="mdc-button mdc-dialog__button dialog-close" data-mdc-dialog-action="close"
+                id="script-dialog-close"
+                type="button">Close
+        </button>
+    </footer>
+
+</dialog>
+
 
 </body>
 </html>

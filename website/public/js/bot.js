@@ -37,6 +37,7 @@ const easyAuth = () => new Promise(resolve => {
             resolve(user);
             return;
         }
+        // noinspection SpellCheckingInspection
         const uiConfig = {
             signInSuccessUrl: '/',
             signInOptions: [
@@ -84,7 +85,7 @@ const addBidi = (id, sampleValue) => {
     const type = typeof sampleValue;
     console.info('addBidi', id, sampleValue, type);
     const template = document.querySelector(`#bidi-template-${type}`);
-    if(!['number', 'boolean'].includes(type)) {
+    if (!['number', 'boolean'].includes(type)) {
         return;
     }
     Object.assign(template.content.querySelector('input'), {
@@ -118,7 +119,7 @@ const addBidi = (id, sampleValue) => {
     }
 
     // Listen for updates from the bot or other apps
-    dbRef.child(id).on('value', snapshot=>{
+    dbRef.child(id).on('value', snapshot => {
         const newValue = snapshot.val();
         const inputElt = document.querySelector('#' + id);
         if (!inputElt) {
@@ -190,8 +191,11 @@ docFullyReady().then(() => {
     instrumentConfigDialog();
 
     // Fixed page on mobile (along with CSS body position: fixed;
-    document.body.ontouchstart  = e => e.preventDefault();
-    document.body.ontouchmove  = e => e.preventDefault();
+    document.body.ontouchstart = e => e.preventDefault();
+    document.body.ontouchmove = e => e.preventDefault();
 
 });
+
+
+
 

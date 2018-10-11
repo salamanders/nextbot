@@ -1,12 +1,21 @@
 html, body {
+    font-family: Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: hidden;
+    touch-action: none;
+    /*noinspection CssUnknownProperty*/
+    overscroll-behavior-y: none;
 }
 
 body {
-    font-family: Roboto, Helvetica, Arial, sans-serif;
     width: calc(100vw - 3px);
     height: calc(100vh - 3px);
+    margin: auto;
 }
 
 #flags-button {
@@ -26,21 +35,8 @@ body {
 }
 
 
-/* http://w3bits.com/prevent-chrome-pull-to-refresh-css/ */
-body,
-.wrapper {
-    /* Break the flow */
+#script-button {
     position: absolute;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    overflow-y: hidden;
-}
-body {
-    z-index: 1;
-    overscroll-behavior-y: none;
-}
-.wrapper {
-    z-index: 2;
+    bottom: 4rem;
+    right: 1rem;
 }

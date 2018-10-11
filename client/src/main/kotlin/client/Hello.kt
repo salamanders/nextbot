@@ -4,11 +4,9 @@ package client
 import com.natpryce.konfig.*
 import com.natpryce.konfig.ConfigurationProperties.Companion.systemProperties
 import info.benjaminhill.nextbot.TwoWheelBot
-import info.benjaminhill.nextbot.hardware.RangeSensor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import java.io.File
 import java.time.Duration
 import java.util.logging.Level
 import java.util.logging.LogManager
@@ -24,16 +22,15 @@ fun main() = runBlocking {
     val uIdKey = Key("user.id", stringType)
     val config = systemProperties() overriding
             EnvironmentVariables() overriding
-            ConfigurationProperties.fromFile(File("resources/nextbot.properties"))
+            ConfigurationProperties.fromResource("nextbot.properties")
 
-
-    val rs = RangeSensor()
-    println("Ping: ${rs.ping()}")
-    System.exit(-1)
+    //val rs = RangeSensor()
+    //println("Ping: ${rs.ping()}")
+    //System.exit(-1)
 
     TwoWheelBot(config[fbIdKey], config[uIdKey]).use { twb ->
-        twb.open()
-        twb.script = "result.motor0 = bot.motor0 * 0.9; let x = notreal.obj;"
+        twb.initObserversAndSync()
+        twb.script = javaClass.getResource("/script.default.js").readText()
         delay(Duration.ofSeconds(1).toMillis())
         twb.setLeftSpeed(.95)
         twb.setRightSpeed(-1.0)

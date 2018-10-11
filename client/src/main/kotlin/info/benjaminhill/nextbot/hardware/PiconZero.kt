@@ -14,7 +14,8 @@ class PiconZero {
 
     init {
         device = try {
-            I2CFactory.getInstance(I2CBus.BUS_0).getDevice(PICON_ZERO_ADDRESS)
+            // Why BUS_1?  Dunno.
+            I2CFactory.getInstance(I2CBus.BUS_1).getDevice(PICON_ZERO_ADDRESS)
         } catch (e: I2CFactory.UnsupportedBusNumberException) {
             FakeI2CDevice("fakeI2Cpz")
         }

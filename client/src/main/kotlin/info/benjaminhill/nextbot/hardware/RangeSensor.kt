@@ -54,8 +54,7 @@ open class RangeSensor : AutoCloseable, CoroutineScope {
             // spin
         }
         val endTime = System.nanoTime()
-        val cm = (((endTime - startTime) / 1e3) / 2) / 29.1
-        return cm
+        return (((endTime - startTime) / 1e3) / 2) / 29.1 // cm
     }
 
     companion object {

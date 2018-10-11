@@ -6,12 +6,8 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.database.*
 import mu.KLoggable
-import java.io.File
-import java.io.FileInputStream
 import java.io.Serializable
-import java.net.InetAddress
 import java.net.NetworkInterface
-
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KMutableProperty1
@@ -33,23 +29,17 @@ open class CloudBot(fbId: String, uId: String) : AutoCloseable, Serializable {
 
     /** Hook up devices here, which will read from the property if triggered. Also useful as an easy-access map of properties */
     @Transient
-    protected val observers: Map<String, MutableSet<() -> Unit>> = this::class.memberProperties
-            .filter { it.returnType.jvmErasure in setOf(Boolean::class, Double::class, String::class) }
-            .associateBy({ it.name }, { mutableSetOf<() -> Unit>() })
+    protected lateinit var observers: Map<String, MutableSet<() -> Unit>>
 
     @Transient
     protected val dbRefState: DatabaseReference
 
     init {
-        val jsonFile = File("resources/serviceAccountKey.json")
-        require(jsonFile.canRead())
-        val serviceAccount = FileInputStream(jsonFile)
-        val options = FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+        FirebaseApp.initializeApp(FirebaseOptions.Builder()
+                .setCredentials(GoogleCredentials.fromStream(
+                        ClassLoader.getSystemClassLoader().getResourceAsStream("serviceAccountKey.json")))
                 .setDatabaseUrl("https://$fbId.firebaseio.com")
-                .build()!!
-        FirebaseApp.initializeApp(options)
-
+                .build()!!)
 
         // TODO: Migrate to firestore
         // Ref to this particular client's current state
@@ -102,8 +92,11 @@ open class CloudBot(fbId: String, uId: String) : AutoCloseable, Serializable {
         override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
             logger.debug { "afterChange ${property.name}=$newValue" }
             dbRefState.child(property.name).setValueAsync(newValue)
-            // Call all registered callbacks
-            observers[property.name]!!.forEach { it() }
+            if (this@CloudBot::observers.isInitialized) {
+                observers[property.name]!!.forEach { it() }
+            } else {
+                logger.warn { "Tried to sync property ${property.name} before setting up initObserversAndSync()" }
+            }
         }
     }
 
@@ -144,9 +137,13 @@ open class CloudBot(fbId: String, uId: String) : AutoCloseable, Serializable {
                 result
             }.toMap()
 
-    open fun open() {
+    open fun initObserversAndSync() {
         // Send up default values in the cloud, in case they are used to render a UI.  Has to be done post-init.
         // TODO: Don't clobber stuff like scripts
+        observers = this::class.memberProperties
+                .filter { it.returnType.jvmErasure in setOf(Boolean::class, Double::class, String::class) }
+                .associateBy({ it.name }, { mutableSetOf<() -> Unit>() })
+
         dbRefState.setValueAsync(this)
     }
 
@@ -162,8 +159,10 @@ open class CloudBot(fbId: String, uId: String) : AutoCloseable, Serializable {
         override val logger = logger()
 
         val macAddressId: String by lazy {
-            NetworkInterface.getByInetAddress(InetAddress.getLocalHost())
-                    .hardwareAddress.joinToString("") { String.format("%02X", it) }
+            NetworkInterface.getNetworkInterfaces().toList()
+                    .sortedBy { it.displayName }
+                    .mapNotNull { it.hardwareAddress?.joinToString("") { b -> String.format("%02X", b) } }
+                    .joinToString("")
         }
     }
 }
