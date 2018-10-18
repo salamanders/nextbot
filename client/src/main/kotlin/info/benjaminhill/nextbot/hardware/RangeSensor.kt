@@ -1,6 +1,5 @@
 package info.benjaminhill.nextbot.hardware
 
-import com.google.firebase.database.Exclude
 import com.pi4j.io.gpio.GpioFactory
 import com.pi4j.io.gpio.PinPullResistance
 import com.pi4j.io.gpio.PinState
@@ -23,7 +22,6 @@ open class RangeSensor : AutoCloseable, CoroutineScope {
     @Transient
     private var job = Job()
 
-    @get:Exclude
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Default
 

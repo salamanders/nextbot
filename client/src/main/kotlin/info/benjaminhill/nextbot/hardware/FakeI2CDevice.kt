@@ -1,11 +1,12 @@
 package info.benjaminhill.nextbot.hardware
 
 import com.pi4j.io.i2c.I2CDevice
-import info.benjaminhill.nextbot.CloudBot
+import info.benjaminhill.nextbot.cloud.RunnableCloudSyncDoc
 import mu.KLoggable
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
 
+/** When there is no I2C bus */
 class FakeI2CDevice(val name: String) : I2CDevice {
 
     private var lastValue = mutableMapOf<Any, Any?>()
@@ -64,7 +65,7 @@ class FakeI2CDevice(val name: String) : I2CDevice {
     override fun read(p0: ByteArray?, p1: Int, p2: Int, p3: ByteArray?, p4: Int, p5: Int): Int = 0
 
     companion object : KLoggable {
-        override val logger = CloudBot.logger()
+        override val logger = RunnableCloudSyncDoc.logger()
     }
 
 }

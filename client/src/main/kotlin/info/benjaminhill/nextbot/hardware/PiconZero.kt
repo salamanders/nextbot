@@ -10,6 +10,12 @@ import java.util.logging.Logger
  */
 class PiconZero {
     private var log: Logger = Logger.getLogger(this::class.java.name)!!
+
+    enum class Motor(val id: Int) {
+        MOTOR_0(0),
+        MOTOR_1(1)
+    }
+
     private val device: I2CDevice
 
     init {
@@ -23,15 +29,14 @@ class PiconZero {
     }
 
     /**
-     * @param motorId 0 or 1
+     * @param motor 0 or 1
      * @param speed motor 0: -1 to 1 inclusive
      */
-    fun setDCMotor(motorId: Int, speed: Double) {
+    fun setDCMotor(motor: Motor, speed: Double) {
         require(speed in -1.0..1.0)
-        require(motorId in 0..1)
         val intSpeed = ((speed + 1.0) / 2 * (127 + 128) - 128).toInt()
-        log.fine("setting DC motor $motorId to $intSpeed")
-        device.write(motorId, intSpeed.toByte())
+        log.fine("setting DC motor ${motor.id} to $intSpeed")
+        device.write(motor.id, intSpeed.toByte())
     }
 
     companion object {

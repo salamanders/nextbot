@@ -1,6 +1,5 @@
-package info.benjaminhill.nextbot
+package info.benjaminhill.nextbot.cloud
 
-import com.google.firebase.database.Exclude
 import com.google.gson.GsonBuilder
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import kotlinx.coroutines.*
@@ -16,11 +15,11 @@ import kotlin.coroutines.CoroutineContext
  * May also use `_history = { count: 0 }` to hold state across calls (eg. previous call time)
  * Example: `script = "result.motor0 = bot.motor0 * 0.9"`
  */
-open class ScriptableCloudBot(fbId: String, uId: String) : CloudBot(fbId, uId), CoroutineScope {
+open class ScriptableCloudBot(uId: String) : RunnableCloudSyncDoc(uId), CoroutineScope {
     @Transient
     private var job = Job()
 
-    @get:Exclude
+    // CoroutineScope also sneaks in an "isActive" that is annoying.
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Default
 
@@ -30,14 +29,9 @@ open class ScriptableCloudBot(fbId: String, uId: String) : CloudBot(fbId, uId), 
     @Transient
     private var scriptJob: Job? = null
 
-    var script by syncToCloud("")
+    var script by RunnableCloudSyncDelegate("") // Blank disables the overhead of scripting.
 
-    var scriptError by syncToCloud("")
-
-    override fun initObserversAndSync() {
-        super.initObserversAndSync()
-        observers[this::script.name]!!.add { setCode() }
-    }
+    var scriptError by RunnableCloudSyncDelegate("")
 
     private fun stop() {
         invocableEngine = null
@@ -52,7 +46,7 @@ open class ScriptableCloudBot(fbId: String, uId: String) : CloudBot(fbId, uId), 
     }
 
     private fun setCode() {
-        // TODO: Start/stop invocation loop.
+
         if (script.isBlank()) {
             stop()
             return
@@ -80,6 +74,7 @@ open class ScriptableCloudBot(fbId: String, uId: String) : CloudBot(fbId, uId), 
         val invocable = engine as Invocable
 
         val jsSource = """/*jshint esversion: 6 */
+if (!Math.sign) { Math.sign = function (x) { return ((x > 0) - (x < 0)) || +x; }; } // polyfill
 const _history = {
   '_count':0,
   '_previousTs': (new Date()).getTime()
@@ -94,7 +89,7 @@ function botLoop(jsonStr) {
   _history._previousTs = (new Date()).getTime();
   return result;
 }"""
-        logger.info { "Setting script to `$jsSource` and running max 4x a second" }
+        logger.info { "Setting script to `$jsSource` and max 4x a second" }
         try {
             engine.eval(jsSource)
         } catch (e: ScriptException) {
@@ -111,12 +106,13 @@ function botLoop(jsonStr) {
                 try {
                     // Because GSON wasn't picking up delegates
                     val result = invocable.invokeFunction("botLoop", GSON.toJson(asSimpleMap()))
+                    @Suppress("UNCHECKED_CAST")
                     (result as Map<String, Any>).entries.forEach { (key, value) ->
                         if (key == this@ScriptableCloudBot::script.name) {
                             logger.warn { "Tried to set script to a new value, no crazy self-modification please." }
                         } else {
                             logger.debug { "Script set $key=$value" }
-                            this@ScriptableCloudBot.setValue(key, value)
+                            this@ScriptableCloudBot[key] = value
                         }
                     }
                 } catch (e: ScriptException) {
